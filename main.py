@@ -114,7 +114,7 @@ def get_vacancies(programm_language):
     return vacancies
 
 def get_table(stats):
-    table_data = [['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата' ]]
+    table_salaries_programmers = [['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата' ]]
     heading = []
     for language_stats in stats:
         heading = []
@@ -122,8 +122,8 @@ def get_table(stats):
         heading.append(stats[language_stats]['vacancies_found'])
         heading.append(stats[language_stats]['vacancies_processed'])
         heading.append(stats[language_stats]['average_salary'])
-        table_data.append(heading)
-    return table_data
+        table_salaries_programmers.append(heading)
+    return table_salaries_programmers
 
 if __name__ == '__main__':
     env = Env()
