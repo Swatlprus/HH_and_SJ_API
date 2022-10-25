@@ -1,3 +1,4 @@
+from cmath import exp
 import requests
 from terminaltables import AsciiTable
 from environs import Env
@@ -11,7 +12,10 @@ def get_superjob_stats(superjob_token):
         analysis_salary['vacancies_found']=sj_response[1]
         all_salarys = predict_rub_salary_for_superJob(sj_response[0])
         analysis_salary['vacancies_processed']=len(all_salarys)
-        analysis_salary['average_salary']=int(sum(all_salarys)/len(all_salarys))
+        try:
+            analysis_salary['average_salary']=int(sum(all_salarys)/len(all_salarys))
+        except ZeroDivisionError:
+            print('Делить на ноль - нельзя. Количество найденных зарплат равно 0')
         stats[programm_language]=analysis_salary
     return stats
 
@@ -63,7 +67,10 @@ def get_hh_stats():
         analysis_salary['vacancies_found']=hh_response[1]
         all_salarys = predict_rub_salary_for_hh(hh_response[0])
         analysis_salary['vacancies_processed']=len(all_salarys)
-        analysis_salary['average_salary']=int(sum(all_salarys)/len(all_salarys))
+        try:
+            analysis_salary['average_salary']=int(sum(all_salarys)/len(all_salarys))
+        except ZeroDivisionError:
+            print('Делить на ноль - нельзя. Количество найденных зарплат равно 0')
         stats[programm_language]=analysis_salary
     return stats
 
@@ -127,6 +134,6 @@ if __name__ == '__main__':
     sj_table = AsciiTable(get_table(sj_stats), 'SuperJob Moscow')
     print(sj_table.table)
 
-    # hh_stats = get_hh_stats()
-    # hh_table = AsciiTable(get_table(hh_stats), 'HeadHunter Moscow')
-    # print(hh_table.table)
+    hh_stats = get_hh_stats()
+    hh_table = AsciiTable(get_table(hh_stats), 'HeadHunter Moscow')
+    print(hh_table.table)
