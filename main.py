@@ -2,12 +2,12 @@ import requests
 from terminaltables import AsciiTable
 from environs import Env
 
-def get_superjob_stats():
+def get_superjob_stats(superjob_token):
     programm_languages = ['Javascript', 'Java', 'Python', 'Ruby', 'PHP', 'C++', 'C#', 'Go', 'Swift']
     stats = {}
     for programm_language in programm_languages:
         analysis_salary = {}
-        sj_response = get_superjob_vacancies(programm_language)
+        sj_response = get_superjob_vacancies(programm_language, superjob_token)
         analysis_salary['vacancies_found']=sj_response['total']
         all_salarys = predict_rub_salary_for_superJob(sj_response['objects'])
         analysis_salary['vacancies_processed']=len(all_salarys)
@@ -31,7 +31,7 @@ def predict_rub_salary_for_superJob(sj_vacancies):
         sj_salarys.append(salary)
     return sj_salarys
 
-def get_superjob_vacancies(programm_language):
+def get_superjob_vacancies(programm_language, superjob_token):
     status_more = True
     page = 0
     while status_more:
@@ -122,7 +122,7 @@ if __name__ == '__main__':
     env.read_env()
     superjob_token = env("SUPERJOB_TOKEN")
 
-    sj_stats = get_superjob_stats()
+    sj_stats = get_superjob_stats(superjob_token)
     sj_table = AsciiTable(get_table(sj_stats), 'SuperJob Moscow')
     print(sj_table.table)
 
