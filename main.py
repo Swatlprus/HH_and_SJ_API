@@ -20,7 +20,6 @@ def predict_rub_salary_for_superJob(sj_vacancies):
     for sj_vacancy in sj_vacancies:
         if sj_vacancy['currency'] != 'rub':
             salary = None
-            print('NONE')
             continue
         elif sj_vacancy['payment_from'] == 0 and sj_vacancy['payment_to'] != 0:
             salary = int(sj_vacancy['payment_to'] * 1.2)
