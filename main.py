@@ -16,7 +16,7 @@ def get_superjob_stats(superjob_token):
     return stats
 
 def predict_rub_salary_for_superJob(sj_vacancies):
-    sj_salarys = []
+    sj_salaries = []
     for sj_vacancy in sj_vacancies:
         if sj_vacancy['currency'] != 'rub':
             salary = None
@@ -28,13 +28,14 @@ def predict_rub_salary_for_superJob(sj_vacancies):
             salary = int(sj_vacancy['payment_from'] * 1.2)
         else:
             salary = int((sj_vacancy['payment_to'] + sj_vacancy['payment_from'])/2)
-        sj_salarys.append(salary)
-    return sj_salarys
+        sj_salaries.append(salary)
+    return sj_salaries
 
 def get_superjob_vacancies(programm_language, superjob_token):
     status_more = True
     page = 0
     moscow_sj_id = 4
+    all_vacancies_sj = []
     while status_more:
         headers = {'X-Api-App-Id': superjob_token}
         url = f'https://api.superjob.ru/2.0/vacancies/'
@@ -42,10 +43,7 @@ def get_superjob_vacancies(programm_language, superjob_token):
         response = requests.get(url, params=params, headers=headers)
         response.raise_for_status()
         sj_vacancies = response.json()
-        if page == 0:
-            all_vacancies_sj = sj_vacancies
-        else:
-            all_vacancies_sj['objects'].extend(sj_vacancies['objects'])
+        all_vacancies_sj['objects'].extend(sj_vacancies['objects'])
         status_more = sj_vacancies['more']
         page += 1
     return all_vacancies_sj
@@ -66,7 +64,7 @@ def get_hh_stats():
 
 
 def predict_rub_salary_for_hh(vacancies):
-    salarys = []
+    salaries = []
     for vacancy in vacancies:
         vacancy_id = vacancy['id']
         url = f'https://api.hh.ru/vacancies/{vacancy_id}'
@@ -85,8 +83,8 @@ def predict_rub_salary_for_hh(vacancies):
                 salary = int(vacancy_salary['from'] * 1.2)
             else:
                 salary = int((vacancy_salary['to'] + vacancy_salary['from'])/2)
-            salarys.append(salary)
-    return salarys
+            salaries.append(salary)
+    return salaries
 
 
 def get_vacancies(programm_language):
@@ -94,6 +92,7 @@ def get_vacancies(programm_language):
     pages_number = 1
     moscow_hh_id = 1
     period = 30
+    all_vacancies = []
     while page < pages_number:
         url = 'https://api.hh.ru/vacancies'
         params = {'text': programm_language, 'area': moscow_hh_id, 'period': period, 'search_field': 'name'}
@@ -101,10 +100,7 @@ def get_vacancies(programm_language):
         page_response.raise_for_status()
         page_payload = page_response.json()
         pages_number = page_payload['pages']
-        if page == 0:
-            all_vacancies = page_payload
-        else:
-            all_vacancies['items'].extend(page_payload['items'])
+        all_vacancies['items'].extend(page_payload['items'])
         page += 1
     return all_vacancies
 
