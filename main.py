@@ -7,9 +7,9 @@ def get_superjob_stats():
     stats = {}
     for programm_language in programm_languages:
         analysis_salary = {}
-        json_response = get_superjob_vacancies(programm_language)
-        analysis_salary['vacancies_found']=json_response['total']
-        all_salarys = predict_rub_salary_for_superJob(json_response['objects'])
+        sj_response = get_superjob_vacancies(programm_language)
+        analysis_salary['vacancies_found']=sj_response['total']
+        all_salarys = predict_rub_salary_for_superJob(sj_response['objects'])
         analysis_salary['vacancies_processed']=len(all_salarys)
         analysis_salary['average_salary']=int(sum(all_salarys)/len(all_salarys))
         stats[programm_language]=analysis_salary
@@ -40,12 +40,12 @@ def get_superjob_vacancies(programm_language):
         params = {'keyword': programm_language, 'town': 4, 'page': page}
         response = requests.get(url, params=params, headers=headers)
         response.raise_for_status()
-        sj_json_vacancies = response.json()
+        sj_vacancies = response.json()
         if page == 0:
-            all_vacancies_sj = sj_json_vacancies
+            all_vacancies_sj = sj_vacancies
         else:
-            all_vacancies_sj['objects'].extend(sj_json_vacancies['objects'])
-        status_more = sj_json_vacancies['more']
+            all_vacancies_sj['objects'].extend(sj_vacancies['objects'])
+        status_more = sj_vacancies['more']
         page += 1
     return all_vacancies_sj
 
@@ -55,9 +55,9 @@ def get_hh_stats():
     stats = {}
     for programm_language in programm_languages:
         analysis_salary = {}
-        json_response = get_vacancies(programm_language)
-        analysis_salary['vacancies_found']=json_response['found']
-        all_salarys = predict_rub_salary_for_hh(json_response['items'])
+        hh_response = get_vacancies(programm_language)
+        analysis_salary['vacancies_found']=hh_response['found']
+        all_salarys = predict_rub_salary_for_hh(hh_response['items'])
         analysis_salary['vacancies_processed']=len(all_salarys)
         analysis_salary['average_salary']=int(sum(all_salarys)/len(all_salarys))
         stats[programm_language]=analysis_salary
