@@ -34,10 +34,11 @@ def predict_rub_salary_for_superJob(sj_vacancies):
 def get_superjob_vacancies(programm_language, superjob_token):
     status_more = True
     page = 0
+    moscow_sj_id = 4
     while status_more:
         headers = {'X-Api-App-Id': superjob_token}
         url = f'https://api.superjob.ru/2.0/vacancies/'
-        params = {'keyword': programm_language, 'town': 4, 'page': page}
+        params = {'keyword': programm_language, 'town': moscow_sj_id, 'page': page}
         response = requests.get(url, params=params, headers=headers)
         response.raise_for_status()
         sj_vacancies = response.json()
@@ -91,9 +92,11 @@ def predict_rub_salary_for_hh(vacancies):
 def get_vacancies(programm_language):
     page = 0
     pages_number = 1
+    moscow_hh_id = 1
+    period = 30
     while page < pages_number:
         url = 'https://api.hh.ru/vacancies'
-        params = {'text': programm_language, 'area': 1, 'period': 30, 'search_field': 'name'}
+        params = {'text': programm_language, 'area': moscow_hh_id, 'period': period, 'search_field': 'name'}
         page_response = requests.get(url, params=params)
         page_response.raise_for_status()
         page_payload = page_response.json()
