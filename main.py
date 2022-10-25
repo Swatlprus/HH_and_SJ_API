@@ -19,13 +19,13 @@ def get_superjob_stats(superjob_token):
         stats[programm_language]=analysis_salary
     return stats
 
-def calculated_salary(sj_vacancy, payment_from='payment_from', payment_to='payment_to'):
-    if not sj_vacancy[payment_from] and sj_vacancy[payment_to]:
-        salary = int(sj_vacancy[payment_to] * 1.2)
-    elif sj_vacancy[payment_from] and not sj_vacancy[payment_to]:
-        salary = int(sj_vacancy[payment_from] * 1.2)
+def calculated_salary(vacancy_salary, payment_from='payment_from', payment_to='payment_to'):
+    if not vacancy_salary[payment_from] and vacancy_salary[payment_to]:
+        salary = int(vacancy_salary[payment_to] * 1.2)
+    elif vacancy_salary[payment_from] and not vacancy_salary[payment_to]:
+        salary = int(vacancy_salary[payment_from] * 1.2)
     else:
-        salary = int((sj_vacancy[payment_to] + sj_vacancy[payment_from])/2)
+        salary = int((vacancy_salary[payment_to] + vacancy_salary[payment_from])/2)
     return salary
 
 def predict_rub_salary_for_superJob(sj_vacancies):
@@ -78,19 +78,12 @@ def get_hh_stats():
 def predict_rub_salary_for_hh(vacancies):
     salaries = []
     for vacancy in vacancies:
-        vacancy_id = vacancy['id']
-        url = f'https://api.hh.ru/vacancies/{vacancy_id}'
-        response = requests.get(url)
-        response.raise_for_status()
-        response_text = response.json()
-        vacancy_salary = response_text['salary']
-
-        if vacancy_salary is not None:
-            if vacancy_salary['currency'] != 'RUR':
+        if vacancy['salary']:
+            if vacancy['salary']['currency'] != 'RUR':
                 salary = None
                 continue
             else:
-                salary = calculated_salary(vacancy_salary, payment_from='from', payment_to='to')
+                salary = calculated_salary(vacancy['salary'], payment_from='from', payment_to='to')
             salaries.append(salary)
     return salaries
 
