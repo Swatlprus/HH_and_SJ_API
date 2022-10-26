@@ -9,11 +9,12 @@ def get_superjob_stats(superjob_token):
     for programm_language in programm_languages:
         analysis_salary = {}
         sj_response = get_superjob_vacancies(programm_language, superjob_token)
-        analysis_salary['vacancies_found']=sj_response[1]
-        all_salarys = predict_rub_salary_for_superJob(sj_response[0])
-        analysis_salary['vacancies_processed']=len(all_salarys)
+        all_vacancies, vacancies_found = sj_response
+        all_salaries = predict_rub_salary_for_superJob(all_vacancies)
+        analysis_salary['vacancies_found']=vacancies_found
+        analysis_salary['vacancies_processed']=len(all_salaries)
         try:
-            analysis_salary['average_salary']=int(sum(all_salarys)/len(all_salarys))
+            analysis_salary['average_salary']=int(sum(all_salaries)/len(all_salaries))
         except ZeroDivisionError:
             print('Делить на ноль - нельзя. Количество найденных зарплат равно 0')
         stats[programm_language]=analysis_salary
@@ -64,11 +65,12 @@ def get_hh_stats():
     for programm_language in programm_languages:
         analysis_salary = {}
         hh_response = get_vacancies(programm_language)
-        analysis_salary['vacancies_found']=hh_response[1]
-        all_salarys = predict_rub_salary_for_hh(hh_response[0])
-        analysis_salary['vacancies_processed']=len(all_salarys)
+        all_vacancies, vacancies_found = hh_response
+        analysis_salary['vacancies_found'] = vacancies_found
+        all_salaries = predict_rub_salary_for_hh(all_vacancies)
+        analysis_salary['vacancies_processed'] = len(all_salaries)
         try:
-            analysis_salary['average_salary']=int(sum(all_salarys)/len(all_salarys))
+            analysis_salary['average_salary'] = int(sum(all_salaries)/len(all_salaries))
         except ZeroDivisionError:
             print('Делить на ноль - нельзя. Количество найденных зарплат равно 0')
         stats[programm_language]=analysis_salary
