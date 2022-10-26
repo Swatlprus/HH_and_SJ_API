@@ -20,7 +20,7 @@ def get_superjob_stats(superjob_token):
         stats[programm_language]=analysis_salary
     return stats
 
-def calculated_salary(vacancy_salary, payment_from='payment_from', payment_to='payment_to'):
+def get_avg_salary(vacancy_salary, payment_from='payment_from', payment_to='payment_to'):
     if not vacancy_salary[payment_from] and vacancy_salary[payment_to]:
         salary = int(vacancy_salary[payment_to] * 1.2)
     elif vacancy_salary[payment_from] and not vacancy_salary[payment_to]:
@@ -36,7 +36,7 @@ def predict_rub_salary_for_superJob(sj_vacancies):
             salary = None
             continue
         else:
-            salary = calculated_salary(sj_vacancy)
+            salary = get_avg_salary(sj_vacancy)
         sj_salaries.append(salary)
     return sj_salaries
 
@@ -80,12 +80,8 @@ def get_hh_stats():
 def predict_rub_salary_for_hh(vacancies):
     salaries = []
     for vacancy in vacancies:
-        if vacancy['salary']:
-            if vacancy['salary']['currency'] != 'RUR':
-                salary = None
-                continue
-            else:
-                salary = calculated_salary(vacancy['salary'], payment_from='from', payment_to='to')
+        if vacancy['salary'] and vacancy['salary']['currency'] == 'RUR':
+            salary = get_avg_salary(vacancy['salary'], payment_from='from', payment_to='to')
             salaries.append(salary)
     return salaries
 
